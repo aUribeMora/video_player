@@ -114,6 +114,35 @@ final class VideoPlayer {
     setUpVideoPlayer(exoPlayer, eventSink);
   }
 
+  void changeMediaSource (
+    Context context,
+    String dataSource,
+    String formatHint,
+    @NonNull Map<String, String> httpHeaders
+  ) {
+    Uri uri = Uri.parse(dataSource);
+    DataSource.Factory dataSourceFactory;
+
+    if (isHTTP(uri)) {
+      DefaultHttpDataSource.Factory httpDataSourceFactory =
+          new DefaultHttpDataSource.Factory()
+              .setUserAgent("ExoPlayer")
+              .setAllowCrossProtocolRedirects(true);
+
+      if (httpHeaders != null && !httpHeaders.isEmpty()) {
+        httpDataSourceFactory.setDefaultRequestProperties(httpHeaders);
+      }
+      dataSourceFactory = httpDataSourceFactory;
+    } else {
+      dataSourceFactory = new DefaultDataSource.Factory(context);
+    }
+
+    MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
+
+    this.exoPlayer.setMediaSource(mediaSource);
+    this.exoPlayer.prepare();
+  }
+
   private static boolean isHTTP(Uri uri) {
     if (uri == null || uri.getScheme() == null) {
       return false;
@@ -213,6 +242,8 @@ final class VideoPlayer {
               if (!isInitialized) {
                 isInitialized = true;
                 sendInitialized();
+              } else {
+                sendMediaUpdated();
               }
             } else if (playbackState == Player.STATE_ENDED) {
               Map<String, Object> event = new HashMap<>();
@@ -289,6 +320,38 @@ final class VideoPlayer {
     if (isInitialized) {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "initialized");
+      event.put("duration", exoPlayer.getDuration());
+
+      if (exoPlayer.getVideoFormat() != null) {
+        Format videoFormat = exoPlayer.getVideoFormat();
+        int width = videoFormat.width;
+        int height = videoFormat.height;
+        int rotationDegrees = videoFormat.rotationDegrees;
+        // Switch the width/height if video was taken in portrait mode
+        if (rotationDegrees == 90 || rotationDegrees == 270) {
+          width = exoPlayer.getVideoFormat().height;
+          height = exoPlayer.getVideoFormat().width;
+        }
+        event.put("width", width);
+        event.put("height", height);
+
+        // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
+        // so inform the Flutter code that the widget needs to be rotated to prevent
+        // upside-down playback for videos with rotationDegrees of 180 (other orientations work
+        // correctly without correction).
+        if (rotationDegrees == 180) {
+          event.put("rotationCorrection", rotationDegrees);
+        }
+      }
+
+      eventSink.success(event);
+    }
+  }
+
+  void sendMediaUpdated() {
+    if (isInitialized) {
+      Map<String, Object> event = new HashMap<>();
+      event.put("event", "mediaUpdated");
       event.put("duration", exoPlayer.getDuration());
 
       if (exoPlayer.getVideoFormat() != null) {

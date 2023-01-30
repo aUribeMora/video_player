@@ -112,16 +112,21 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<Duration> getPosition(int textureId) async {
-    final PositionMessage response =
-        await _api.position(TextureMessage(textureId: textureId));
+    final PositionMessage response = await _api.position(TextureMessage(textureId: textureId));
     return Duration(milliseconds: response.position);
   }
 
   @override
+  Future<void> changeMediaSource(String uri, int textureId) {
+    return _api.changeMediaSource(TextureMessage(
+      uri: uri,
+      textureId: textureId,
+    ));
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(textureId).receiveBroadcastStream().map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
       switch (map['event']) {
         case 'initialized':
@@ -147,6 +152,14 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
           return VideoEvent(eventType: VideoEventType.bufferingStart);
         case 'bufferingEnd':
           return VideoEvent(eventType: VideoEventType.bufferingEnd);
+        case 'mediaUpdated':
+          return VideoEvent(
+            eventType: VideoEventType.mediaUpdated,
+            duration: Duration(milliseconds: map['duration'] as int),
+            size: Size((map['width'] as num?)?.toDouble() ?? 0.0,
+                (map['height'] as num?)?.toDouble() ?? 0.0),
+            rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+          );
         default:
           return VideoEvent(eventType: VideoEventType.unknown);
       }
@@ -160,16 +173,14 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) {
-    return _api
-        .setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
+    return _api.setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
   }
 
   EventChannel _eventChannelFor(int textureId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }
 
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
+  static const Map<VideoFormat, String> _videoFormatStringMap = <VideoFormat, String>{
     VideoFormat.ss: 'ss',
     VideoFormat.hls: 'hls',
     VideoFormat.dash: 'dash',

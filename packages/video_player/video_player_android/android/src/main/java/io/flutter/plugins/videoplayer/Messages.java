@@ -26,9 +26,14 @@ public class Messages {
   /** Generated class from Pigeon that represents data sent in messages. */
   public static class TextureMessage {
     private @NonNull Long textureId;
+    private String uri;
 
     public @NonNull Long getTextureId() {
       return textureId;
+    }
+
+    public String getUri() {
+      return uri;
     }
 
     public void setTextureId(@NonNull Long setterArg) {
@@ -38,20 +43,31 @@ public class Messages {
       this.textureId = setterArg;
     }
 
+    public void setUri(String setterArg) {
+      this.uri = setterArg;
+    }
+
     /** Constructor is private to enforce null safety; use Builder. */
     private TextureMessage() {}
 
     public static class Builder {
       private @Nullable Long textureId;
+      private String uri;
 
       public @NonNull Builder setTextureId(@NonNull Long setterArg) {
         this.textureId = setterArg;
         return this;
       }
 
+      public Builder setUri(String setterArg) {
+        this.uri = setterArg;
+        return this;
+      }
+
       public @NonNull TextureMessage build() {
         TextureMessage pigeonReturn = new TextureMessage();
         pigeonReturn.setTextureId(textureId);
+        pigeonReturn.setUri(uri);
         return pigeonReturn;
       }
     }
@@ -60,16 +76,22 @@ public class Messages {
     Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
       toMapResult.put("textureId", textureId);
+      toMapResult.put("uri", uri);
       return toMapResult;
     }
 
     static @NonNull TextureMessage fromMap(@NonNull Map<String, Object> map) {
       TextureMessage pigeonResult = new TextureMessage();
       Object textureId = map.get("textureId");
+      Object uri = map.get("uri");
       pigeonResult.setTextureId(
           (textureId == null)
               ? null
               : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setUri(
+          (uri == null)
+              ? null
+              : (String) uri);
       return pigeonResult;
     }
   }
@@ -920,6 +942,31 @@ public class Messages {
                     throw new NullPointerException("msgArg unexpectedly null.");
                   }
                   api.setMixWithOthers(msgArg);
+                  wrapped.put("result", null);
+                } catch (Error | RuntimeException exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.AndroidVideoPlayerApi.changeMediaSource", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                Map<String, Object> wrapped = new HashMap<>();
+                try {
+                  ArrayList<Object> args = (ArrayList<Object>) message;
+                  TextureMessage msgArg = (TextureMessage) args.get(0);
+                  if (msgArg == null) {
+                    throw new NullPointerException("msgArg unexpectedly null.");
+                  }
+                  api.changeMediaSource(msgArg);
                   wrapped.put("result", null);
                 } catch (Error | RuntimeException exception) {
                   wrapped.put("error", wrapError(exception));

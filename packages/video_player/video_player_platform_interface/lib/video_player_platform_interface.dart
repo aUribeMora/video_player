@@ -102,6 +102,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setMixWithOthers(bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
+
+  /// Sets a new media source for the video player
+  Future<void> changeMediaSource(String uri, int textureId) {
+    throw UnimplementedError('changeMediaSource() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -279,6 +284,9 @@ enum VideoEventType {
   /// The video stopped to buffer.
   bufferingEnd,
 
+  /// The media source has been updated for the current videoplayer
+  mediaUpdated,
+
   /// An unknown event has been received.
   unknown,
 }
@@ -333,8 +341,7 @@ class DurationRange {
   }
 
   @override
-  String toString() =>
-      '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
+  String toString() => '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
 
   @override
   bool operator ==(Object other) =>

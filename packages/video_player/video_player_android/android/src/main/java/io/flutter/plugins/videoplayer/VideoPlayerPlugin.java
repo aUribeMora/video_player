@@ -211,6 +211,16 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
+  public void changeMediaSource(TextureMessage args) {
+    VideoPlayer player = videoPlayers.valueAt(0);
+    player.changeMediaSource(
+      flutterState.applicationContext,
+      args.getUri(),
+      null,
+      null
+    );
+  }
+
   private interface KeyForAssetFn {
     String get(String asset);
   }
