@@ -665,8 +665,10 @@ public class Messages {
     void seekTo(@NonNull PositionMessage msg);
 
     void pause(@NonNull TextureMessage msg);
-
+    
     void setMixWithOthers(@NonNull MixWithOthersMessage msg);
+
+    void changeMediaSource(@NonNull TextureMessage msg);
 
     /** The codec used by AndroidVideoPlayerApi. */
     static MessageCodec<Object> getCodec() {
