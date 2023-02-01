@@ -482,6 +482,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Change the source of the main videoplayer
   Future<void> changeMediaSource(String uri) async {
+    mediaUpdated = false;
     await _videoPlayerPlatform.changeMediaSource(uri, _textureId);
   }
 
