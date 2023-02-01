@@ -236,14 +236,13 @@ final class VideoPlayer {
           @Override
           public void onPlaybackStateChanged(final int playbackState) {
             if (playbackState == Player.STATE_BUFFERING) {
+              sendMediaUpdated();
               setBuffering(true);
               sendBufferingUpdate();
             } else if (playbackState == Player.STATE_READY) {
               if (!isInitialized) {
                 isInitialized = true;
                 sendInitialized();
-              } else {
-                sendMediaUpdated();
               }
             } else if (playbackState == Player.STATE_ENDED) {
               Map<String, Object> event = new HashMap<>();
