@@ -405,7 +405,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
-            uri: Uri.parse(event.uri),
+            uri: Uri.parse(event.uri!),
           );
           break;
         case VideoEventType.unknown:
