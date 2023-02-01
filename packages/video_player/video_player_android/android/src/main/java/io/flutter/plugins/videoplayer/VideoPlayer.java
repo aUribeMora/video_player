@@ -60,7 +60,7 @@ final class VideoPlayer {
 
   private final VideoPlayerOptions options;
 
-  private Uri uri;
+  private String uri;
 
   VideoPlayer(
       Context context,
@@ -76,10 +76,11 @@ final class VideoPlayer {
 
     ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
 
-    this.uri = Uri.parse(dataSource);
+    this.uri = dataSource;
+    Uri uri = Uri.parse(dataSource);
     DataSource.Factory dataSourceFactory;
 
-    if (isHTTP(this.uri)) {
+    if (isHTTP(uri)) {
       DefaultHttpDataSource.Factory httpDataSourceFactory =
           new DefaultHttpDataSource.Factory()
               .setUserAgent("ExoPlayer")
@@ -93,7 +94,7 @@ final class VideoPlayer {
       dataSourceFactory = new DefaultDataSource.Factory(context);
     }
 
-    MediaSource mediaSource = buildMediaSource(this.uri, dataSourceFactory, formatHint, context);
+    MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
 
     exoPlayer.setMediaSource(mediaSource);
     exoPlayer.prepare();
@@ -122,10 +123,11 @@ final class VideoPlayer {
     String formatHint,
     @NonNull Map<String, String> httpHeaders
   ) {
-    this.uri = Uri.parse(dataSource);
+    this.uri = dataSource; 
+    Uri uri = Uri.parse(dataSource);
     DataSource.Factory dataSourceFactory;
 
-    if (isHTTP(this.uri)) {
+    if (isHTTP(uri)) {
       DefaultHttpDataSource.Factory httpDataSourceFactory =
           new DefaultHttpDataSource.Factory()
               .setUserAgent("ExoPlayer")
@@ -139,7 +141,7 @@ final class VideoPlayer {
       dataSourceFactory = new DefaultDataSource.Factory(context);
     }
 
-    MediaSource mediaSource = buildMediaSource(this.uri, dataSourceFactory, formatHint, context);
+    MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
 
     this.exoPlayer.setMediaSource(mediaSource);
     this.exoPlayer.prepare();
@@ -322,7 +324,7 @@ final class VideoPlayer {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "initialized");
       event.put("duration", exoPlayer.getDuration());
-      event.put("uri", this.uri.toString());
+      event.put("uri", this.uri);
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();
@@ -355,7 +357,7 @@ final class VideoPlayer {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "mediaUpdated");
       event.put("duration", exoPlayer.getDuration());
-      event.put("uri", this.uri.toString());
+      event.put("uri", this.uri);
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();

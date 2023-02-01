@@ -375,7 +375,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
-            uri: event.uri,
+            uri: Uri.parse(event.uri!),
           );
           initializingCompleter.complete(null);
           _applyLooping();
