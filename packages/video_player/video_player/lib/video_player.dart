@@ -51,6 +51,7 @@ class VideoPlayerValue {
     this.playbackSpeed = 1.0,
     this.rotationCorrection = 0,
     this.errorDescription,
+    this.uri,
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -119,6 +120,9 @@ class VideoPlayerValue {
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
 
+  // The current Uri
+  final Uri? uri;
+
   /// Returns [size.width] / [size.height].
   ///
   /// Will return `1.0` if:
@@ -153,6 +157,7 @@ class VideoPlayerValue {
     double? playbackSpeed,
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
+    Uri? uri,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -170,6 +175,7 @@ class VideoPlayerValue {
       rotationCorrection: rotationCorrection ?? this.rotationCorrection,
       errorDescription:
           errorDescription != _defaultErrorDescription ? errorDescription : this.errorDescription,
+      uri: uri ?? this.uri,
     );
   }
 
@@ -188,7 +194,8 @@ class VideoPlayerValue {
         'isBuffering: $isBuffering, '
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
-        'errorDescription: $errorDescription)';
+        'errorDescription: $errorDescription, '
+        'uri: $uri)';
   }
 }
 
@@ -368,12 +375,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
+            uri: event.uri,
           );
           initializingCompleter.complete(null);
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
-          print('Videoplayer just initialized');
           break;
         case VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
@@ -398,8 +405,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
+            uri: event.uri,
           );
-          print('Videoplayer just changed media');
           break;
         case VideoEventType.unknown:
           break;
