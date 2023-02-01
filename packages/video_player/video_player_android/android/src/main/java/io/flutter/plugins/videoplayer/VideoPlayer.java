@@ -60,8 +60,6 @@ final class VideoPlayer {
 
   private final VideoPlayerOptions options;
 
-  private String uri;
-
   VideoPlayer(
       Context context,
       EventChannel eventChannel,
@@ -76,7 +74,6 @@ final class VideoPlayer {
 
     ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
 
-    this.uri = dataSource;
     Uri uri = Uri.parse(dataSource);
     DataSource.Factory dataSourceFactory;
 
@@ -123,7 +120,7 @@ final class VideoPlayer {
     String formatHint,
     @NonNull Map<String, String> httpHeaders
   ) {
-    this.uri = dataSource; 
+    
     Uri uri = Uri.parse(dataSource);
     DataSource.Factory dataSourceFactory;
 
@@ -240,13 +237,14 @@ final class VideoPlayer {
           @Override
           public void onPlaybackStateChanged(final int playbackState) {
             if (playbackState == Player.STATE_BUFFERING) {
-              sendMediaUpdated();
               setBuffering(true);
               sendBufferingUpdate();
             } else if (playbackState == Player.STATE_READY) {
               if (!isInitialized) {
                 isInitialized = true;
                 sendInitialized();
+              } else {
+                sendMediaUpdated();
               }
             } else if (playbackState == Player.STATE_ENDED) {
               Map<String, Object> event = new HashMap<>();
@@ -324,7 +322,6 @@ final class VideoPlayer {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "initialized");
       event.put("duration", exoPlayer.getDuration());
-      event.put("uri", this.uri);
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();
@@ -357,7 +354,6 @@ final class VideoPlayer {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "mediaUpdated");
       event.put("duration", exoPlayer.getDuration());
-      event.put("uri", this.uri);
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();

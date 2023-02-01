@@ -302,6 +302,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
   _VideoAppLifeCycleObserver? _lifeCycleObserver;
+  bool? mediaUpdated = false;
 
   /// The id of a texture that hasn't been initialized.
   @visibleForTesting
@@ -375,7 +376,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
-            uri: Uri.parse(event.uri!),
           );
           initializingCompleter.complete(null);
           _applyLooping();
@@ -405,8 +405,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
-            uri: Uri.parse(event.uri!),
           );
+          mediaUpdated = true;
           break;
         case VideoEventType.unknown:
           break;
