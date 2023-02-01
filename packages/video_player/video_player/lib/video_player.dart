@@ -373,6 +373,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
+          print('Videoplayer just initialized');
           break;
         case VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
@@ -398,10 +399,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             isInitialized: event.duration != null,
             errorDescription: null,
           );
-          initializingCompleter.complete(null);
-          _applyLooping();
-          _applyVolume();
-          _applyPlayPause();
+          print('Videoplayer just changed media');
           break;
         case VideoEventType.unknown:
           break;
