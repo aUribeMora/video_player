@@ -322,7 +322,7 @@ final class VideoPlayer {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "initialized");
       event.put("duration", exoPlayer.getDuration());
-      event.put("uri", this.uri);
+      event.put("uri", this.uri.toString());
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();
@@ -355,7 +355,7 @@ final class VideoPlayer {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "mediaUpdated");
       event.put("duration", exoPlayer.getDuration());
-      event.put("uri", this.uri);
+      event.put("uri", this.uri.toString());
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();

@@ -246,7 +246,7 @@ class VideoEvent {
   /// Uri of the video just applied to ExoPlayer.
   ///
   /// Only used if [eventType] is [VideoEventType.mediaUpdated] or [VideoEventType.initialized].
-  final Uri? uri;
+  final String? uri;
 
   @override
   bool operator ==(Object other) {
