@@ -381,6 +381,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
+          mediaUpdated = true;
           break;
         case VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
